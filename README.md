@@ -147,6 +147,5 @@ const emergencyData = [
 ```
 
 ---
-This project is open-source . Build, edit, and travel safely!
-## 📄 License
+
 This project is open-source . Build, edit, and travel safely!
