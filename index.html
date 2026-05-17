@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ClimateGuard – Real-time weather intelligence, trip planning, city comparison, and emergency contacts for smart travellers worldwide.">
+  <title>ClimateGuard | Weather Intelligence for Travellers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/weather.css">
+  <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/loader.css">
+  <link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loader" class="loader-overlay">
+  <div class="loader-content">
+    <div class="loader-logo"><i class="fa-solid fa-wind"></i><span>ClimateGuard</span></div>
+    <div class="loader-spinner">
+      <div class="spinner-ring"></div><div class="spinner-ring"></div><div class="spinner-ring"></div>
+    </div>
+    <p class="loader-text" id="loaderText">Initializing ClimateGuard...</p>
+    <div class="loader-progress"><div class="progress-bar" id="progressBar"></div></div>
+  </div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar" id="mainNav">
+  <a href="index.html" class="logo" id="navLogo">
+    <i class="fa-solid fa-wind"></i><span>ClimateGuard</span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="plan.html" id="navPlan">Plan a Trip</a>
+    <a href="compare.html" id="navCompare">Compare Cities</a>
+    <a href="emergency.html" id="navEmergency">Emergency</a>
+    <a href="#weather" id="navWeather">Weather</a>
+    <a href="#contact" id="navContact">Contact</a>
+  </div>
+  <div class="nav-actions">
+    <div class="status-badge" id="onlineStatus">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Online</span>
+    </div>
+    <button class="settings-btn" id="settingsBtn" aria-label="Open Settings">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06
+          a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09
+          A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83
+          l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09
+          A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83
+          l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09
+          a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83
+          l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09
+          a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Settings Panel -->
+<div class="settings-overlay" id="settingsOverlay"></div>
+<aside class="settings-panel" id="settingsPanel">
+  <div class="settings-header">
+    <h2><i class="fa-solid fa-sliders"></i> Settings</h2>
+    <button class="settings-close" id="settingsClose">&times;</button>
+  </div>
+  <div class="settings-section">
+    <h3>Appearance</h3>
+    <div class="settings-row">
+      <span><i class="fa-solid fa-moon"></i> Dark / Light Mode</span>
+      <label class="toggle-switch" for="themeToggle">
+        <input type="checkbox" id="themeToggle" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+  <div class="settings-section">
+    <h3>Units</h3>
+    <div class="settings-row">
+      <span><i class="fa-solid fa-temperature-half"></i> Temperature Unit</span>
+      <div class="unit-toggle" id="unitToggle">
+        <button class="unit-btn active" id="btnCelsius" data-unit="C">°C</button>
+        <button class="unit-btn" id="btnFahrenheit" data-unit="F">°F</button>
+      </div>
+    </div>
+  </div>
+  <div class="settings-section">
+    <h3>Converter</h3>
+    <div class="converter-box">
+      <label for="convertInput">Enter Temperature</label>
+      <input type="number" id="convertInput" placeholder="e.g. 25">
+      <div class="convert-row">
+        <select id="convertFrom"><option value="C">Celsius</option><option value="F">Fahrenheit</option><option value="K">Kelvin</option></select>
+        <span class="arrow-icon">→</span>
+        <select id="convertTo"><option value="F">Fahrenheit</option><option value="C">Celsius</option><option value="K">Kelvin</option></select>
+      </div>
+      <button id="convertBtn" class="convert-btn">Convert</button>
+      <div class="convert-result" id="convertResult"></div>
+    </div>
+  </div>
+  <div class="settings-section">
+    <h3>Network</h3>
+    <div class="settings-row">
+      <span><i class="fa-solid fa-wifi"></i> Connection Status</span>
+      <span class="network-status" id="networkStatus">Online</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== HERO SECTION ===== -->
+<section class="hero" id="hero">
+  <div class="hero-content fade-in">
+    <div class="hero-badge">
+      <i class="fa-solid fa-satellite-dish"></i> Real-Time Weather Intelligence
+    </div>
+    <h1>Navigate Climate<br><span class="gradient-text">With Confidence</span></h1>
+    <p>Get live weather data, plan smarter trips, compare cities, and access global emergency contacts — all in one powerful dashboard.</p>
+    <div class="hero-actions">
+      <a href="plan.html" class="btn btn-primary" id="heroPlanBtn">
+        <i class="fa-solid fa-map-location-dot"></i> Plan a Trip
+      </a>
+      <a href="#weather" class="btn btn-outline" id="heroWeatherBtn">
+        <i class="fa-solid fa-cloud-sun-rain"></i> Check Weather
+      </a>
+    </div>
+  </div>
+  <div class="earth-container">
+    <div class="earth-rings">
+      <div class="ring ring-1"></div>
+      <div class="ring ring-2"></div>
+      <div class="ring ring-3"></div>
+    </div>
+    <div class="earth-icon">🌍</div>
+  </div>
+</section>
+
+<!-- ===== STATS SECTION ===== -->
+<section class="stats-section" id="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card glass-card fade-in">
+        <i class="fa-solid fa-city"></i>
+        <h3>Cities Covered</h3>
+        <span class="number">200K+</span>
+        <span class="label">Worldwide</span>
+      </div>
+      <div class="stat-card glass-card fade-in">
+        <i class="fa-solid fa-bolt"></i>
+        <h3>API Calls</h3>
+        <span class="number">1M+</span>
+        <span class="label">Monthly</span>
+      </div>
+      <div class="stat-card glass-card fade-in">
+        <i class="fa-solid fa-shield-halved"></i>
+        <h3>Emergency DB</h3>
+        <span class="number">30+</span>
+        <span class="label">Countries</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WEATHER SECTION ===== -->
+<section class="weather-section" id="weather">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Live Weather Analysis</h2>
+      <p>Search any city worldwide for instant climate intelligence.</p>
+    </div>
+
+    <div class="search-bar" id="searchBar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="cityInput" placeholder="Enter city name... (e.g. Tokyo, London, New York)" autocomplete="off">
+      <button class="btn btn-primary" id="searchBtn">Analyze</button>
+      <button class="btn btn-outline" id="gpsBtn" aria-label="Use GPS location">
+        <i class="fa-solid fa-location-crosshairs"></i>
+      </button>
+    </div>
+
+    <!-- Weather Results (hidden until search) -->
+    <div class="weather-results" id="weatherResults" style="display:none;">
+      <!-- Main Weather Card -->
+      <div class="weather-main-card">
+        <div class="weather-location" id="weatherLocation">--</div>
+        <div class="weather-temp-row">
+          <div class="weather-temp" id="weatherTemp">--</div>
+          <div class="weather-icon-large" id="weatherIconLarge">🌤️</div>
+        </div>
+        <div class="weather-desc" id="weatherDesc">--</div>
+        <div class="weather-details-grid">
+          <div class="w-detail">
+            <i class="fa-solid fa-droplet"></i>
+            <span id="wHumidity">--</span>
+            <small>Humidity</small>
+          </div>
+          <div class="w-detail">
+            <i class="fa-solid fa-wind"></i>
+            <span id="wWind">--</span>
+            <small>Wind</small>
+          </div>
+          <div class="w-detail">
+            <i class="fa-solid fa-eye"></i>
+            <span id="wVisibility">--</span>
+            <small>Visibility</small>
+          </div>
+          <div class="w-detail">
+            <i class="fa-solid fa-gauge"></i>
+            <span id="wPressure">--</span>
+            <small>Pressure</small>
+          </div>
+          <div class="w-detail">
+            <i class="fa-solid fa-sun"></i>
+            <span id="wSunrise">--</span>
+            <small>Sunrise</small>
+          </div>
+          <div class="w-detail">
+            <i class="fa-solid fa-moon"></i>
+            <span id="wSunset">--</span>
+            <small>Sunset</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map Container -->
+      <div class="map-container">
+        <div id="mainMapFrame" style="width:100%; height:400px; border-radius:var(--radius-lg); overflow:hidden;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT SECTION ===== -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Get in Touch</h2>
+      <p>Have questions or feedback? We'd love to hear from you.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-info fade-in">
+        <h3>Contact Information</h3>
+        <p><i class="fa-solid fa-envelope"></i> support@climateguard.io</p>
+        <p><i class="fa-solid fa-phone"></i> 9090000000</p>
+        <p><i class="fa-solid fa-location-dot"></i> DELHI,INDIA</p>
+      </div>
+
+      <form class="contact-form fade-in" id="contactFormEl" novalidate>
+        <p class="feedback-text">Send us your feedback and we'll get back to you within 24 hours.</p>
+        <div class="form-group">
+          <label for="contactName">Your Name *</label>
+          <input type="text" id="contactName" placeholder="John Doe" required>
+          <span class="field-error" id="nameError"></span>
+        </div>
+        <div class="form-group">
+          <label for="contactEmail">Email Address *</label>
+          <input type="email" id="contactEmail" placeholder="john@example.com" required>
+          <span class="field-error" id="emailError"></span>
+        </div>
+        <div class="form-group">
+          <label for="contactMsg">Message *</label>
+          <textarea id="contactMsg" rows="4" placeholder="Tell us what you think..." required></textarea>
+          <span class="field-error" id="msgError"></span>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="contactSubmitBtn">
+          <i class="fa-solid fa-paper-plane"></i> Send Message
+        </button>
+        <div class="form-success" id="formSuccess" style="display:none;">
+          ✅ Message sent successfully! We'll get back to you soon.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo">
+          <i class="fa-solid fa-wind"></i><span>ClimateGuard</span>
+        </a>
+        <p style="margin-top: 14px;">Real-time weather intelligence for smart travellers. Plan, compare, and stay safe with ClimateGuard.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="plan.html">Plan a Trip</a></li>
+          <li><a href="compare.html">Compare Cities</a></li>
+          <li><a href="emergency.html">Emergency Numbers</a></li>
+          <li><a href="#weather">Weather</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ClimateGuard | All Rights Reserved</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/utils.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/loader.js"></script>
+<script src="js/weather.js"></script>
+<script src="js/map.js"></script>
+<script src="js/contact.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+[data-theme="light"] .loader-overlay {
+  background: #f0f4f8;
+}
+
+[data-theme="light"] .loader-logo {
+  background: linear-gradient(135deg, #1a202c, #4a5568);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="light"] .loader-text { color: #4a5568; }
+
+.loader-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.loader-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff, #9ca3af);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.loader-logo i {
+  color: var(--primary);
+  -webkit-text-fill-color: var(--primary);
+  filter: drop-shadow(0 0 10px var(--primary-glow));
+  animation: spinWind 3s linear infinite;
+}
+
+@keyframes spinWind {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Three concentric spinner rings */
+.loader-spinner {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.spinner-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  animation: spinRing 1.2s linear infinite;
+}
+
+.spinner-ring:nth-child(1) {
+  border-top-color: var(--primary);
+  animation-duration: 1.2s;
+}
+
+.spinner-ring:nth-child(2) {
+  inset: 10px;
+  border-right-color: rgba(29, 209, 161, 0.5);
+  animation-duration: 0.9s;
+  animation-direction: reverse;
+}
+
+.spinner-ring:nth-child(3) {
+  inset: 20px;
+  border-bottom-color: rgba(29, 209, 161, 0.25);
+  animation-duration: 0.6s;
+}
+
+@keyframes spinRing {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.loader-text {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  animation: fadeText 1.5s ease infinite alternate;
+}
+
+@keyframes fadeText {
+  from { opacity: 0.5; }
+  to   { opacity: 1; }
+}
+
+.loader-progress {
+  width: 220px;
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 10px;
+  transition: width 0.1s linear;
+}

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Plan your trip with ClimateGuard – get weather forecasts, risk analysis, and a countdown timer for your next adventure.">
+  <title>ClimateGuard | Plan a Trip</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/plan.css">
+  <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/loader.css">
+  <link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loader" class="loader-overlay">
+  <div class="loader-content">
+    <div class="loader-logo"><i class="fa-solid fa-wind"></i><span>ClimateGuard</span></div>
+    <div class="loader-spinner">
+      <div class="spinner-ring"></div><div class="spinner-ring"></div><div class="spinner-ring"></div>
+    </div>
+    <p class="loader-text" id="loaderText">Loading Trip Planner...</p>
+    <div class="loader-progress"><div class="progress-bar" id="progressBar"></div></div>
+  </div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar" id="mainNav">
+  <a href="index.html" class="logo" id="navLogo">
+    <i class="fa-solid fa-wind"></i><span>ClimateGuard</span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="plan.html" class="active" id="navPlan">Plan a Trip</a>
+    <a href="compare.html" id="navCompare">Compare Cities</a>
+    <a href="emergency.html" id="navEmergency">Emergency</a>
+    <a href="index.html#weather" id="navWeather">Weather</a>
+    <a href="index.html#contact" id="navContact">Contact</a>
+  </div>
+  <div class="nav-actions">
+    <div class="status-badge" id="onlineStatus">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Online</span>
+    </div>
+    <button class="settings-btn" id="settingsBtn" aria-label="Open Settings">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06
+          a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09
+          A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83
+          l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09
+          A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83
+          l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09
+          a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83
+          l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09
+          a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Settings Panel -->
+<div class="settings-overlay" id="settingsOverlay"></div>
+<aside class="settings-panel" id="settingsPanel">
+  <div class="settings-header">
+    <h2><i class="fa-solid fa-sliders"></i> Settings</h2>
+    <button class="settings-close" id="settingsClose">&times;</button>
+  </div>
+  <div class="settings-section">
+    <h3>Appearance</h3>
+    <div class="settings-row">
+      <span><i class="fa-solid fa-moon"></i> Dark / Light Mode</span>
+      <label class="toggle-switch" for="themeToggle">
+        <input type="checkbox" id="themeToggle" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+  <div class="settings-section">
+    <h3>Units</h3>
+    <div class="settings-row">
+      <span><i class="fa-solid fa-temperature-half"></i> Temperature Unit</span>
+      <div class="unit-toggle" id="unitToggle">
+        <button class="unit-btn active" id="btnCelsius" data-unit="C">°C</button>
+        <button class="unit-btn" id="btnFahrenheit" data-unit="F">°F</button>
+      </div>
+    </div>
+  </div>
+  <div class="settings-section">
+    <h3>Converter</h3>
+    <div class="converter-box">
+      <label for="convertInput">Enter Temperature</label>
+      <input type="number" id="convertInput" placeholder="e.g. 25">
+      <div class="convert-row">
+        <select id="convertFrom"><option value="C">Celsius</option><option value="F">Fahrenheit</option><option value="K">Kelvin</option></select>
+        <span class="arrow-icon">→</span>
+        <select id="convertTo"><option value="F">Fahrenheit</option><option value="C">Celsius</option><option value="K">Kelvin</option></select>
+      </div>
+      <button id="convertBtn" class="convert-btn">Convert</button>
+      <div class="convert-result" id="convertResult"></div>
+    </div>
+  </div>
+  <div class="settings-section">
+    <h3>Network</h3>
+    <div class="settings-row">
+      <span><i class="fa-solid fa-wifi"></i> Connection Status</span>
+      <span class="network-status" id="networkStatus">Online</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="plan-main">
+  <div class="container">
+    <div class="page-header fade-in">
+      <h1><i class="fa-solid fa-map-location-dot"></i> Plan Your Trip</h1>
+      <p>Get weather-aware trip plans with live forecasts, risk scores, and a countdown to your adventure.</p>
+    </div>
+
+    <div class="plan-grid">
+      <!-- Trip Form -->
+      <div class="plan-card" id="tripFormCard">
+        <h2>Trip Details</h2>
+        <form id="tripForm" novalidate>
+          <div class="form-group">
+            <label for="tripDestination">Destination *</label>
+            <input type="text" id="tripDestination" placeholder="e.g. Kyoto, Japan" required>
+            <span class="field-error" id="destError"></span>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tripStart">Start Date *</label>
+              <input type="date" id="tripStart" required>
+            </div>
+            <div class="form-group">
+              <label for="tripEnd">End Date *</label>
+              <input type="date" id="tripEnd" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="tripStyle">Trip Style</label>
+            <select id="tripStyle">
+              <option value="leisure">🏖️ Leisure</option>
+              <option value="business">💼 Business</option>
+              <option value="adventure">🧗 Adventure</option>
+              <option value="cultural">🏛️ Cultural</option>
+              <option value="backpacking">🎒 Backpacking</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="tripBudget">Budget Range</label>
+            <select id="tripBudget">
+              <option value="budget">💰 Budget ($0–$500)</option>
+              <option value="mid">💳 Mid-Range ($500–$2000)</option>
+              <option value="luxury">💎 Luxury ($2000+)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="tripRisk">Risk Tolerance: <span id="riskVal">5</span>/10</label>
+            <input type="range" min="1" max="10" value="5" id="tripRisk" aria-label="Risk tolerance slider">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="generatePlanBtn">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Trip Plan
+          </button>
+        </form>
+      </div>
+
+      <!-- Trip Results -->
+      <div class="plan-results" id="planResults">
+        <!-- Countdown Timer -->
+        <div class="countdown-card" id="countdownCard" style="display:none;">
+          <h3><i class="fa-solid fa-hourglass-half"></i> Trip Countdown</h3>
+          <div class="countdown-grid">
+            <div class="cd-unit"><span id="cdDays">--</span><small>Days</small></div>
+            <div class="cd-unit"><span id="cdHours">--</span><small>Hours</small></div>
+            <div class="cd-unit"><span id="cdMins">--</span><small>Mins</small></div>
+            <div class="cd-unit"><span id="cdSecs">--</span><small>Secs</small></div>
+          </div>
+          <p class="cd-label" id="cdLabel">Until your trip begins</p>
+        </div>
+
+        <!-- Weather for Destination -->
+        <div class="weather-forecast-card" id="destWeatherCard" style="display:none;">
+          <h3><i class="fa-solid fa-cloud-sun"></i> Destination Weather</h3>
+          <div class="dest-weather-inner" id="destWeatherInner">
+            <div class="dw-temp" id="dwTemp">--</div>
+            <div class="dw-icon" id="dwIcon">🌤️</div>
+            <div class="dw-desc" id="dwDesc">--</div>
+            <div class="dw-details">
+              <span><i class="fa-solid fa-droplet"></i> <span id="dwHum">--</span></span>
+              <span><i class="fa-solid fa-wind"></i> <span id="dwWind">--</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk Analysis -->
+        <div class="risk-card" id="riskCard" style="display:none;">
+          <h3><i class="fa-solid fa-shield-halved"></i> Climate Risk Analysis</h3>
+          <div class="risk-score-wrap">
+            <div class="risk-circle" id="riskCircle">
+              <span id="riskScore">--</span>
+              <small>/ 10</small>
+            </div>
+            <div>
+              <div class="risk-level" id="riskLevel">--</div>
+              <p class="risk-tip" id="riskTip">Analyzing...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Itinerary -->
+        <div class="itinerary-card" id="itineraryCard" style="display:none;">
+          <h3><i class="fa-solid fa-list-check"></i> Suggested Itinerary</h3>
+          <div class="itinerary-list" id="itineraryList"></div>
+        </div>
+
+        <div class="dest-map-card" id="destMapCard" style="display:none;">
+          <h3><i class="fa-solid fa-map"></i> Destination Map</h3>
+          <div
+            id="planMapFrame"
+            class="osm-frame"
+            style="width:100%; height:300px; border:0; border-radius:16px; overflow:hidden;"
+            title="Destination Map"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p>&copy; 2026 ClimateGuard | All Rights Reserved</p>
+  </div>
+</footer>
+
+<script src="js/utils.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/loader.js"></script>
+<script src="js/weather.js"></script>
+<script src="js/map.js"></script>
+<script src="js/countdown.js"></script>
+<script src="js/trip-planner.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Emergency contacts and numbers for countries worldwide – ClimateGuard Travel Safety.">
+  <title>ClimateGuard | Emergency Numbers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/emergency.css">
+  <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/loader.css">
+</head>
+
+<body>
+
+  <div id="loader" class="loader-overlay">
+    <div class="loader-content">
+      <div class="loader-logo"><i class="fa-solid fa-wind"></i><span>ClimateGuard</span></div>
+      <div class="loader-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <p class="loader-text" id="loaderText">Loading Emergency Directory...</p>
+      <div class="loader-progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="navbar" id="mainNav">
+    <a href="index.html" class="logo" id="navLogo">
+      <i class="fa-solid fa-wind"></i><span>ClimateGuard</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="plan.html" id="navPlan">Plan a Trip</a>
+      <a href="compare.html" id="navCompare">Compare Cities</a>
+      <a href="emergency.html" class="active" id="navEmergency">Emergency</a>
+      <a href="index.html#weather" id="navWeather">Weather</a>
+      <a href="index.html#contact" id="navContact">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <div class="status-badge" id="onlineStatus">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Online</span>
+      </div>
+      <button class="settings-btn" id="settingsBtn" aria-label="Open Settings">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06
+          a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09
+          A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83
+          l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09
+          A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83
+          l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09
+          a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83
+          l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09
+          a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <div class="settings-overlay" id="settingsOverlay"></div>
+  <aside class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <h2><i class="fa-solid fa-sliders"></i> Settings</h2>
+      <button class="settings-close" id="settingsClose">&times;</button>
+    </div>
+    <div class="settings-section">
+      <h3>Appearance</h3>
+      <div class="settings-row">
+        <span><i class="fa-solid fa-moon"></i> Dark / Light Mode</span>
+        <label class="toggle-switch" for="themeToggle">
+          <input type="checkbox" id="themeToggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3>Units</h3>
+      <div class="settings-row">
+        <span><i class="fa-solid fa-temperature-half"></i> Temperature Unit</span>
+        <div class="unit-toggle" id="unitToggle">
+          <button class="unit-btn active" id="btnCelsius" data-unit="C">°C</button>
+          <button class="unit-btn" id="btnFahrenheit" data-unit="F">°F</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3>Converter</h3>
+      <div class="converter-box">
+        <label for="convertInput">Enter Temperature</label>
+        <input type="number" id="convertInput" placeholder="e.g. 25">
+        <div class="convert-row">
+          <select id="convertFrom">
+            <option value="C">Celsius</option>
+            <option value="F">Fahrenheit</option>
+            <option value="K">Kelvin</option>
+          </select>
+          <span class="arrow-icon">→</span>
+          <select id="convertTo">
+            <option value="F">Fahrenheit</option>
+            <option value="C">Celsius</option>
+            <option value="K">Kelvin</option>
+          </select>
+        </div>
+        <button id="convertBtn" class="convert-btn">Convert</button>
+        <div class="convert-result" id="convertResult"></div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3>Network</h3>
+      <div class="settings-row">
+        <span><i class="fa-solid fa-wifi"></i> Connection Status</span>
+        <span class="network-status" id="networkStatus">Online</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== EMERGENCY MAIN ===== -->
+  <main class="emergency-main">
+    <div class="container">
+      <div class="page-header fade-in">
+        <h1><i class="fa-solid fa-phone-volume"></i> Emergency Numbers</h1>
+        <p>Worldwide emergency contact directory. Search by country for instant access to critical numbers.</p>
+      </div>
+
+      <!-- Search -->
+      <div class="emergency-search" id="emergencySearch">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="countrySearch" placeholder="Search country... (e.g. India, USA, UK)" autocomplete="off">
+      </div>
+
+      <!-- Emergency Grid -->
+      <div class="emergency-grid" id="emergencyGrid"></div>
+
+      <!-- No results -->
+      <div class="no-results" id="noResults" style="display:none;">
+        <i class="fa-solid fa-circle-xmark"></i>
+        <p>No country found. Try a different search.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 ClimateGuard | All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <script src="js/utils.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/loader.js"></script>
+  <script src="js/emergency.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
