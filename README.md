@@ -149,4 +149,4 @@ const emergencyData = [
 ---
 This project is open-source . Build, edit, and travel safely!
 ## 📄 License
-This project is open-source and available under the **MIT License**. Build, edit, and travel safely!
+This project is open-source . Build, edit, and travel safely!
